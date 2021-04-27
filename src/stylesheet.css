@@ -1,0 +1,9 @@
+window {
+    background-color: black;
+}
+#center_label {
+    font-size: 40px;
+}
+#unlocked_instructions_label {
+    font-size: 20px;
+}
