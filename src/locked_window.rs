@@ -58,7 +58,7 @@ impl LockedWindow {
             let seat = window.get_display().get_default_seat().unwrap();
             grab::grab_and_add_exit_handler_or_panic(seat, window);
 
-            return gtk::Inhibit(false);
+            return gtk::Inhibit(true);
         });
 
         let right_mouse_down = std::cell::Cell::new(None);
