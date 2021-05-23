@@ -72,7 +72,7 @@ impl LockedWindow {
                 if event.get_button().unwrap() == 3 {
                     if right_mouse_down.get().is_some() {
                         if now::now() - right_mouse_down.get().unwrap() > constants::HOLD_TO_UNLOCK_DURATION {
-                            std::process::exit(1);
+                            std::process::exit(0);
                         } else {
                             right_mouse_down.set(None);
                         }
