@@ -56,7 +56,15 @@ impl LockedWindow {
     pub fn show_and_grab(self) {
         self.window.connect_focus_in_event(|window, _event| {
             let seat = window.get_display().get_default_seat().unwrap();
-            grab::grab_or_panic(seat, window);
+            
+            let mut grab_result = grab::try_grab(&seat, window);
+            let grab_attempt_started_at = now::now();
+            while grab_result.is_err() {
+                if now::now() - grab_attempt_started_at > constants::MAX_GRAB_RETRY_DURATION {
+                    panic!("Failed to acquire grab!");
+                }
+                grab_result = grab::try_grab(&seat, window);
+            }
 
             return gtk::Inhibit(true);
         });
