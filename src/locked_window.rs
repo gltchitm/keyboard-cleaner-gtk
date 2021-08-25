@@ -15,7 +15,7 @@ impl LockedWindow {
             window: gtk::ApplicationWindow::new(app)
         }
     }
-    pub fn init(&'_ self) {
+    pub fn init(&self) {
         self.window.set_title(constants::MESSAGE_WINDOW_TITLE);
         self.window.set_skip_taskbar_hint(true);
         self.window.set_skip_pager_hint(true);
