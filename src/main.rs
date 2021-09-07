@@ -9,6 +9,9 @@ mod grab;
 mod now;
 
 fn main() {
+    #[cfg(not(target_os = "linux"))]
+    compile_error!("Only Linux is supported!");
+
     let application = gtk::Application::new(
         None,
         Default::default()
