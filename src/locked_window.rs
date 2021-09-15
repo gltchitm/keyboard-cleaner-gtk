@@ -1,6 +1,6 @@
-extern crate gdk;
+use gtk::prelude::*;
+use gdk::WindowExt;
 
-use super::gtk::prelude::*;
 use super::constants;
 use super::grab;
 use super::now;
@@ -23,32 +23,37 @@ impl LockedWindow {
         self.window.set_keep_above(true);
         self.window.set_deletable(false);
         self.window.fullscreen();
-        
+
         let provider = gtk::CssProvider::new();
         let stylesheet = include_bytes!("stylesheet.css");
-    
+
         gtk::StyleContext::add_provider_for_screen(
             &gdk::Screen::get_default().unwrap(),
             &provider,
             gtk::STYLE_PROVIDER_PRIORITY_APPLICATION
         );
-        
+
         provider.load_from_data(stylesheet).unwrap();
 
         let vertical_box = gtk::Box::new(gtk::Orientation::Vertical, 0);
 
         let center_label = gtk::Label::new(Some(constants::MESSAGE_KEYBOARD_CLEANER_ACTIVATED));
         let unlock_instructions_label = gtk::Label::new(Some(constants::MESSAGE_HOLD_TO_UNLOCK));
-        
-        gtk::WidgetExt::set_widget_name(&center_label, "center_label");
-        gtk::WidgetExt::set_widget_name(&unlock_instructions_label, "unlocked_instructions_label");
+
+        center_label.set_widget_name("center_label");
+        unlock_instructions_label.set_widget_name("unlocked_instructions_label");
 
         vertical_box.set_center_widget(Some(&center_label));
-        vertical_box.pack_end(&unlock_instructions_label, false, false, constants::BOTTOM_LABEL_PADDING);
+        vertical_box.pack_end(
+            &unlock_instructions_label,
+            false,
+            false,
+            constants::BOTTOM_LABEL_PADDING
+        );
 
         self.window.connect_realize(|window| {
             let cursor = gdk::Cursor::new_for_display(&window.get_display(), gdk::CursorType::BlankCursor);
-            gdk::WindowExt::set_cursor(&window.get_window().unwrap(), Some(&cursor));
+            window.get_window().unwrap().set_cursor(Some(&cursor));
         });
 
         self.window.add(&vertical_box);
@@ -56,7 +61,7 @@ impl LockedWindow {
     pub fn show_and_grab(self) {
         self.window.connect_focus_in_event(|window, _event| {
             let seat = window.get_display().get_default_seat().unwrap();
-            
+
             let mut grab_result = grab::try_grab(&seat, window);
             let grab_attempt_started_at = now::now();
             while grab_result.is_err() {
