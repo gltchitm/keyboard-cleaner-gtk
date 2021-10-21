@@ -10,8 +10,8 @@ pub struct LockedWindow {
 }
 
 impl LockedWindow {
-    pub fn new(app: &gtk::Application) -> LockedWindow {
-        LockedWindow {
+    pub fn new(app: &gtk::Application) -> Self {
+        Self {
             window: gtk::ApplicationWindow::new(app)
         }
     }
@@ -66,12 +66,12 @@ impl LockedWindow {
             let grab_attempt_started_at = now::now();
             while grab_result.is_err() {
                 if now::now() - grab_attempt_started_at > constants::MAX_GRAB_RETRY_DURATION {
-                    panic!("Failed to acquire grab!");
+                    panic!("failed to acquire grab!");
                 }
                 grab_result = grab::try_grab(&seat, window);
             }
 
-            return gtk::Inhibit(true);
+            gtk::Inhibit(true)
         });
 
         let right_mouse_down = std::cell::Cell::new(None);
@@ -93,7 +93,7 @@ impl LockedWindow {
                 }
             }
 
-            return gtk::Inhibit(false);
+            gtk::Inhibit(false)
         });
 
         self.window.show_all();

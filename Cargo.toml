@@ -2,7 +2,7 @@
 name = "keyboard-cleaner-gtk"
 version = "0.1.0"
 authors = ["gltchitm <42951031+gltchitm@users.noreply.github.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 gio = "0.9.1"

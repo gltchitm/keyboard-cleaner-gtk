@@ -1,5 +1,5 @@
-use gtk::prelude::*;
 use gdk::WindowExt;
+use gtk::prelude::*;
 
 pub fn try_grab(seat: &gdk::Seat, window: &gtk::ApplicationWindow) -> Result<(), ()> {
     match seat.grab(
