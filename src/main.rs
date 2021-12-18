@@ -3,7 +3,6 @@ use gio::prelude::*;
 mod constants;
 mod grab;
 mod locked_window;
-mod now;
 
 fn main() {
     #[cfg(not(target_os = "linux"))]

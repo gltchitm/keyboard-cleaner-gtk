@@ -1,9 +1,13 @@
 use gtk::prelude::*;
 use gdk::WindowExt;
 
-use super::constants;
-use super::grab;
-use super::now;
+use crate::constants;
+use crate::grab;
+
+fn now() -> u128 {
+    let time = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH);
+    time.unwrap().as_millis()
+}
 
 pub struct LockedWindow {
     window: gtk::ApplicationWindow
@@ -63,9 +67,9 @@ impl LockedWindow {
             let seat = window.get_display().get_default_seat().unwrap();
 
             let mut grab_result = grab::try_grab(&seat, window);
-            let grab_attempt_started_at = now::now();
+            let grab_attempt_started_at = now();
             while grab_result.is_err() {
-                if now::now() - grab_attempt_started_at > constants::MAX_GRAB_RETRY_DURATION {
+                if now() - grab_attempt_started_at > constants::MAX_GRAB_RETRY_DURATION {
                     panic!("failed to acquire grab!");
                 }
                 grab_result = grab::try_grab(&seat, window);
@@ -78,13 +82,13 @@ impl LockedWindow {
         self.window.connect_event(move |_window, event| {
             if event.get_event_type() == gdk::EventType::ButtonPress {
                 if event.get_button().unwrap() == 3 {
-                    right_mouse_down.set(Some(now::now()));
+                    right_mouse_down.set(Some(now()));
                     return gtk::Inhibit(true);
                 }
             } else if event.get_event_type() == gdk::EventType::ButtonRelease {
                 if event.get_button().unwrap() == 3 {
                     if right_mouse_down.get().is_some() {
-                        if now::now() - right_mouse_down.get().unwrap() > constants::HOLD_TO_UNLOCK_DURATION {
+                        if now() - right_mouse_down.get().unwrap() > constants::HOLD_TO_UNLOCK_DURATION {
                             std::process::exit(0);
                         } else {
                             right_mouse_down.set(None);
