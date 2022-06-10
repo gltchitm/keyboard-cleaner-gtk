@@ -1,16 +1,15 @@
-use gdk::WindowExt;
 use gtk::prelude::*;
 
 pub fn try_grab(seat: &gdk::Seat, window: &gtk::ApplicationWindow) -> Result<(), ()> {
     match seat.grab(
-        &window.get_window().unwrap(),
+        &window.window().unwrap(),
         gdk::SeatCapabilities::ALL,
         true,
-        window.get_window().unwrap().get_cursor().as_ref(),
+        window.window().unwrap().cursor().as_ref(),
         None,
-        None
+        None,
     ) {
         gdk::GrabStatus::Success => Ok(()),
-        _ => Err(())
+        _ => Err(()),
     }
 }
