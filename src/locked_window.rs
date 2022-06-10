@@ -76,6 +76,9 @@ impl LockedWindow {
                     panic!("failed to acquire grab!");
                 }
                 grab_result = grab::try_grab(&seat, window);
+                if grab_result.is_err() {
+                    std::thread::sleep(std::time::Duration::from_millis(150));
+                }
             }
 
             gtk::Inhibit(true)
